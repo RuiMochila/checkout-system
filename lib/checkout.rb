@@ -8,27 +8,17 @@ class Checkout
 
   def scan(product)
     @basket << product
-
-    # Because there might be an impact on previsouly added products' prices
     @total = 0.0
 
-    # TODO: Determine simplest approach, iterate products and apply active promotions on spot or the other way
-    # Could go through promotions first and check which ones are active then apply at the bottom
-    # Could update price for each product on basket based on that instead of iterating and adding, but that would make it hard to rollback
     @basket.each do |product|
 
-      product_promotion = @available_promotions
-        .find do |promotion| 
-          promotion.promotion_type == PromotionRuleType::PRODUCT_AMMOUNT and 
-          promotion.product_code == product.code 
-        end
+      product_promotion = available_promotion_for(product: product)
 
-      if product_promotion and 
-        @basket.count { |product| product.code == product_promotion.product_code } >= product_promotion.activation_ammount
+      if product_promotion and meets_promotion_ammount_criteria(promotion: product_promotion, product: product)
         price = case product_promotion.discount_type
         when PromotionDiscountType::ABSOLUTE
           product.price - product_promotion.discount_ammount
-        when PromotionDiscountType::PERCENTUAL
+        when PromotionDiscountType::PERCENTAGE
           product.price * (1 - product_promotion.discount_ammount).to_f
         end
         @total += price
@@ -38,21 +28,19 @@ class Checkout
     end
 
     @available_promotions
-      .select{ |promotion| promotion.promotion_type == PromotionRuleType::TOTAL_SPEND }
+      .select{ |promotion| promotion.promotion_type == PromotionRuleType::TOTAL_SPENT }
       .each do |promotion|
-        # Asked for over ammount in spec
         if @total > promotion.activation_ammount
           @total = case promotion.discount_type
           when PromotionDiscountType::ABSOLUTE
             @total -= promotion.discount_ammount
-          when PromotionDiscountType::PERCENTUAL
+          when PromotionDiscountType::PERCENTAGE
             @total * (1 - promotion.discount_ammount).to_f
           end
         end
       end
 
-    # TODO: Determine if communication at this point is valuable
-    @total.round(2)
+    total
   end
 
   def total
@@ -63,4 +51,18 @@ class Checkout
     @basket = []
     @total = 0.0
   end
+
+  private
+  def available_promotion_for(product:)
+    @available_promotions
+      .find do |promotion| 
+        promotion.promotion_type == PromotionRuleType::PRODUCT_AMMOUNT and 
+        promotion.product_code == product.code 
+      end
+  end
+
+  def meets_promotion_ammount_criteria(promotion:, product:)
+    @basket.count { |product| product.code == promotion.product_code } >= promotion.activation_ammount
+  end
+
 end

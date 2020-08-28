@@ -1,4 +1,4 @@
 module PromotionRuleType
-  TOTAL_SPEND = 1
+  TOTAL_SPENT = 1
   PRODUCT_AMMOUNT = 2
 end

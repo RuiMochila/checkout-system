@@ -4,15 +4,13 @@
 
 `PromotionRule` stores necessary information regarding promotions
 
-> if `promotion_type` equals `PromotionRuleType::TOTAL_SPENT`
-`activation_ammount` will hold pounds 
-if `promotion_type` equals `PromotionRuleType::PRODUCT_AMMOUNT`
-`activation_ammount` will hold a product count
+> if `promotion_type` equals `PromotionRuleType::TOTAL_SPENT` - `activation_ammount` will hold pounds
 
-> if `discount_type` equals `PromotionDiscountType::ABSOLUTE`
-`discount_ammount` will hold pounds to apply a flat price reduction
-if `discount_type` equals `PromotionDiscountType::PERCENTAGE`
-`discount_ammount` will hold a percentage
+> if `promotion_type` equals `PromotionRuleType::PRODUCT_AMMOUNT` - `activation_ammount` will hold a product count
+
+> if `discount_type` equals `PromotionDiscountType::ABSOLUTE` - `discount_ammount` will hold pounds to apply a flat price reduction
+
+> if `discount_type` equals `PromotionDiscountType::PERCENTAGE` - `discount_ammount` will hold a percentage
 
 Run spec
 

@@ -14,14 +14,21 @@ RSpec.describe Checkout do
   end
 
   describe "#total" do
-    # TODO: Initialize subject with same promotion rules
-    # TODO: Add promotional rules after determining required format
     let(:total_spending_promotion) do 
-      PromotionRule.new(promotion_type: PromotionRuleType::TOTAL_SPEND, 
-                        discount_type: PromotionDiscountType::PERCENTUAL, 
-                        activation_ammount: 60, discount_ammount: 0.10)
+      PromotionRule.new(
+        promotion_type: PromotionRuleType::TOTAL_SPEND, 
+        discount_type: PromotionDiscountType::PERCENTUAL, 
+        activation_ammount: 60, discount_ammount: 0.10
+      )
     end
-    subject { Checkout.new([total_spending_promotion]) }
+    let(:product_ammount_promotion) do 
+      PromotionRule.new(
+        promotion_type: PromotionRuleType::PRODUCT_AMMOUNT,
+        discount_type: PromotionDiscountType::ABSOLUTE,
+        product_code: "001", activation_ammount: 2, discount_ammount: 0.75
+      )
+    end
+    subject { Checkout.new([total_spending_promotion, product_ammount_promotion]) }
     after(:each) { subject.clear_basket }
 
     context "with a total spending based discount" do

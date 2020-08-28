@@ -17,6 +17,7 @@ class PromotionRule
   attr_reader :promotion_type, :discount_type, :activation_ammount, :product_code, :discount_ammount
 
   def initialize(promotion_type:, discount_type:, activation_ammount:, product_code: nil, discount_ammount:)
+    # TODO: Guard, product ammount promotion requires product_code
     @promotion_type = promotion_type
     @discount_type = discount_type
     @activation_ammount = activation_ammount
